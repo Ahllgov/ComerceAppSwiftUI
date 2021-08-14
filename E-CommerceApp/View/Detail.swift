@@ -12,6 +12,8 @@ struct Detail: View {
     @Binding var show: Bool
     
     var animation: Namespace.ID
+    
+    @State var loadContent = false
    
     var body: some View {
     
@@ -78,8 +80,35 @@ struct Detail: View {
                                 .matchedGeometryEffect(id: "color\(selectedItem.id)", in: animation))
                 .cornerRadius(15)
                 .padding()
-                Spacer()
+                
+                //Delay loading the content for smooth animation
+                
+                VStack{
+                    VStack(spacing: 8){
+                        Text("Exclusive Offer")
+                            .fontWeight(.heavy)
+                            .foregroundColor(.black)
+                        
+                        Text("Frame + Lens for(it's 50% off")
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.vertical)
+                    .frame(width: UIScreen.main.bounds.width - 30, alignment: .leading)
+                }
+                .padding([.horizontal, .bottom])
+                .frame(width: loadContent ? nil : 0)
+                .opacity(loadContent ? 1 : 0)
+                
+                //for smooth trancition...
+                
+                
+                Spacer(minLength: 0)
         }
+            .onAppear {
+                withAnimation(Animation.spring().delay(0.45)){
+                    loadContent.toggle()
+                }
+            }
     }
 }
 
