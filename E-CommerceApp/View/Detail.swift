@@ -14,9 +14,13 @@ struct Detail: View {
     var animation: Namespace.ID
     
     @State var loadContent = false
+    
+    @State var selectedColor: Color = Color("p1")
    
     var body: some View {
     
+         //Optimization for smaller size iphones
+        ScrollView(UIScreen.main.bounds.height < 750 ? .vertical : .init(), content: {
             VStack{
                 HStack(spacing: 25){
                     Button(action: {
@@ -84,7 +88,7 @@ struct Detail: View {
                 //Delay loading the content for smooth animation
                 
                 VStack{
-                    VStack(spacing: 8){
+                    VStack(alignment: .leading, spacing: 8){
                         Text("Exclusive Offer")
                             .fontWeight(.heavy)
                             .foregroundColor(.black)
@@ -92,8 +96,63 @@ struct Detail: View {
                         Text("Frame + Lens for(it's 50% off")
                             .foregroundColor(.gray)
                     }
-                    .padding(.vertical)
+                    .padding()
                     .frame(width: UIScreen.main.bounds.width - 30, alignment: .leading)
+                    .background(Color("p3"))
+                    .cornerRadius(15)
+                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Color")
+                            .fontWeight(.heavy)
+                            .foregroundColor(.black)
+                        
+                        HStack(spacing: 15){
+                            ForEach(1...4, id: \.self){i in
+                                ZStack{
+                                    Color("p\(i)")
+                                        .clipShape(Circle())
+                                        .frame(width: 45, height: 45)
+                                        .onTapGesture {
+                                            withAnimation{
+                                                selectedColor = Color("p\(i)")
+                                            }
+                                        }
+                                    
+                                    //Checkmark for selected one...
+                                    
+                                    if selectedColor == Color("p\(i)"){
+                                        Image(systemName: "checkmark")
+                                            .foregroundColor(.black)
+                                    }
+                                }
+                            }
+                            Spacer(minLength: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/)
+                        }
+                    }
+                    .padding()
+                    
+                    Spacer(minLength: 15)
+                    
+                    Button(action:{}){
+                        Text("Try on me in 3D".capitalized)
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                            .padding(.vertical)
+                            .frame(width: UIScreen.main.bounds.width - 100)
+                            .background(
+                                RoundedRectangle(cornerRadius: 15)
+                                    .stroke(Color.black, lineWidth: 1))
+                    }
+                    Button(action:{}){
+                        Text("Add to cart".capitalized)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .padding(.vertical)
+                            .frame(width: UIScreen.main.bounds.width - 100)
+                            .background(Color(.black))
+                            .cornerRadius(15)
+                    }
+                    .padding(.vertical)
                 }
                 .padding([.horizontal, .bottom])
                 .frame(width: loadContent ? nil : 0)
@@ -104,6 +163,7 @@ struct Detail: View {
                 
                 Spacer(minLength: 0)
         }
+        })
             .onAppear {
                 withAnimation(Animation.spring().delay(0.45)){
                     loadContent.toggle()
